@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float movementSpeed = 1;
-    public float jumpForce = 1;
-    public float heliHatJumpForce = 1;
+    public float movementSpeed;
+    public float jumpForce;
+    public float heliHatJumpForce;
+    public float slideBoostForce;
 
     private bool usedHeliJump;
+    private bool usedSlideOfConfidence;
+    private bool isSliding;
 
     public MechanicsManager mechanicsManager;
 
@@ -19,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
     public Transform slopeCheck;
 
     Rigidbody2D rigidbody;
+    BoxCollider2D boxCollider;
     SpriteRenderer spriteRenderer;
     
 
@@ -27,8 +31,11 @@ public class PlayerMovement : MonoBehaviour
     {
         rigidbody = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        boxCollider = GetComponent<BoxCollider2D>();
 
         usedHeliJump = false;
+        usedSlideOfConfidence = false;
+        isSliding = false;
     }
 
     // Update is called once per frame
@@ -54,37 +61,42 @@ public class PlayerMovement : MonoBehaviour
 
         // Walky Left
         if (Input.GetKey("d") || Input.GetKey("right")) {
-            // On Slope Movement
-            if (isOnSlope && isGrounded)
-                rigidbody.velocity = new Vector2(movementSpeed/1.5f, rigidbody.velocity.y);
-            // Everywhere Else Movement
-            else
-                rigidbody.velocity = new Vector2(movementSpeed, rigidbody.velocity.y);
-
+            if (!isSliding) {
+                // On Slope Movement
+                if (isOnSlope && isGrounded)
+                    rigidbody.velocity = new Vector2(movementSpeed/1.5f, rigidbody.velocity.y);
+                // Everywhere Else Movement
+                else
+                    rigidbody.velocity = new Vector2(movementSpeed, rigidbody.velocity.y);
+            }
             spriteRenderer.flipX = false;
             //TODO Animate run right
         }
 
         // Walky Right
         else if (Input.GetKey("a") || Input.GetKey("left")) {
-            // On Slope Movement
-            if (isOnSlope && isGrounded)
-                rigidbody.velocity = new Vector2(-movementSpeed/1.5f, rigidbody.velocity.y);
-            // Everywhere Else Movement
-            else
-                rigidbody.velocity = new Vector2(-movementSpeed, rigidbody.velocity.y);
+            if (!isSliding) {
+                // On Slope Movement
+                if (isOnSlope && isGrounded)
+                    rigidbody.velocity = new Vector2(-movementSpeed/1.5f, rigidbody.velocity.y);
+                // Everywhere Else Movement
+                else
+                    rigidbody.velocity = new Vector2(-movementSpeed, rigidbody.velocity.y);
+            }
 
             spriteRenderer.flipX = true; 
             //TODO Animate run left 
         }
         else {
             //TODO Animate idle
-            rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
+            if (!isSliding)
+                rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
         }
 
         // Floaty after Helicopter Hat
         if (Input.GetKey("space") && usedHeliJump && rigidbody.velocity.y < 0)
-            rigidbody.drag = 10f; 
+            rigidbody.drag = 5f; 
+            // TODO Animate floating
         else
             rigidbody.drag = 0f;
 
@@ -101,9 +113,31 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // Allow heli jump once you have landed
+        // Slide of self confidence
+        if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded && !usedSlideOfConfidence && mechanicsManager.hasSuperShoes) {
+            usedSlideOfConfidence = true;
+            isSliding = true;
+
+            if (rigidbody.velocity.x > 0f)
+                rigidbody.AddForce(new Vector2(slideBoostForce, 0));
+            else if (rigidbody.velocity.x < 0f)
+                rigidbody.AddForce(new Vector2(-slideBoostForce, 0));
+
+            boxCollider.offset = new Vector2(0f, -0.5f);
+            boxCollider.size = new Vector2(1f, 1f);
+        }
+
+        // Reset heli jump once you have landed
         if (isGrounded) {
             usedHeliJump = false;
+        }
+
+        // Exit out of a confident slide once you go under a certain speed
+        if (isSliding && rigidbody.velocity.x < 3f && rigidbody.velocity.x > -3f) {
+            boxCollider.offset = new Vector2(0f, 0f);
+            boxCollider.size = new Vector2(1f, 2f);
+            usedSlideOfConfidence = false;
+            isSliding = false;
         }
    }
 }
