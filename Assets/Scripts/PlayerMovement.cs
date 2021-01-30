@@ -128,23 +128,23 @@ public class PlayerMovement : MonoBehaviour
             boxCollider.size = new Vector2(1f, 1f);
         }
 
-        // If a trampoline jump has been triggered, do the jump silly!
-        if (triggerTrampolineJump) {
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, trampolineJumpForce);
-            triggerTrampolineJump = false;
-        }
-
         // Reset heli jump once you have landed
         if (isGrounded) {
             usedHeliJump = false;
         }
 
         // Exit out of a confident slide once you go under a certain speed
-        if (isSliding && rigidbody.velocity.x < 3f && rigidbody.velocity.x > -3f) {
+        if (isSliding && rigidbody.velocity.x < 3f && rigidbody.velocity.x > -3f || triggerTrampolineJump) {
             boxCollider.offset = new Vector2(0f, 0f);
             boxCollider.size = new Vector2(1f, 2f);
             usedSlideOfConfidence = false;
             isSliding = false;
+        }
+
+        // If a trampoline jump has been triggered, do the jump silly!
+        if (triggerTrampolineJump) {
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, trampolineJumpForce);
+            triggerTrampolineJump = false;
         }
     }
 
