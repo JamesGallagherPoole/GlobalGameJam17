@@ -137,9 +137,17 @@ public class PlayerMovement : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collider)
     {
         // Trigger a trampoline jump!
-        if(collider.gameObject.tag == "Trampoline")
+        if (collider.gameObject.tag == "Trampoline")
         {
             triggerTrampolineJump = true;
+        }
+
+        // Trigger a pickup!
+        if (collider.gameObject.tag == "HeliPickup")
+        {
+            mechanicsManager.hasHeliHat = true;
+            collider.gameObject.SetActive(false);
+            Debug.Log("Picked Up");
         }
     }
 
