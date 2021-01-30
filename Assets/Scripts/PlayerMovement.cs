@@ -20,9 +20,11 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isGrounded;
     private bool isOnSlope;
+    private bool isUnderCeiling;
 
     public Transform groundCheck;
     public Transform slopeCheck;
+    public Transform ceilingCheck;
 
     Rigidbody2D rigidbody;
     BoxCollider2D boxCollider;
@@ -44,27 +46,11 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground")))
-        {
-            isGrounded = true;
-        }
-        else
-        {
-            isGrounded = false;
-        }
-
-        if (Physics2D.Linecast(transform.position, slopeCheck.position, 1 << LayerMask.NameToLayer("Ground")))
-        {
-            isOnSlope = false;
-        }
-        else
-        {
-            isOnSlope = true;
-        }
+        DetectCollisions();
 
         // Walky Left
         if (Input.GetKey("d") || Input.GetKey("right")) {
-            if (!isSliding) {
+            if (!isSliding || !isGrounded) {
                 // On Slope Movement
                 if (isOnSlope && isGrounded)
                     rigidbody.velocity = new Vector2(movementSpeed/1.5f, rigidbody.velocity.y);
@@ -78,7 +64,7 @@ public class PlayerMovement : MonoBehaviour
 
         // Walky Right
         else if (Input.GetKey("a") || Input.GetKey("left")) {
-            if (!isSliding) {
+            if (!isSliding || !isGrounded) {
                 // On Slope Movement
                 if (isOnSlope && isGrounded)
                     rigidbody.velocity = new Vector2(-movementSpeed/1.5f, rigidbody.velocity.y);
@@ -135,8 +121,8 @@ public class PlayerMovement : MonoBehaviour
 
         // Exit out of a confident slide once you go under a certain speed
         if (isSliding && rigidbody.velocity.x < 3f && rigidbody.velocity.x > -3f || triggerTrampolineJump) {
-            boxCollider.offset = new Vector2(0f, 0f);
-            boxCollider.size = new Vector2(1f, 2f);
+            boxCollider.offset = new Vector2(0f, -.05f);
+            boxCollider.size = new Vector2(1f, 1.9f);
             usedSlideOfConfidence = false;
             isSliding = false;
         }
@@ -151,9 +137,47 @@ public class PlayerMovement : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collider)
     {
         // Trigger a trampoline jump!
-        if(collider.gameObject.tag == "Trampoline")
+        if (collider.gameObject.tag == "Trampoline")
         {
             triggerTrampolineJump = true;
+        }
+
+        // Trigger a pickup!
+        if (collider.gameObject.tag == "HeliPickup")
+        {
+            mechanicsManager.hasHeliHat = true;
+            collider.gameObject.SetActive(false);
+            Debug.Log("Picked Up");
+        }
+    }
+
+    private void DetectCollisions()
+    {
+        if (Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground")))
+        {
+            isGrounded = true;
+        }
+        else
+        {
+            isGrounded = false;
+        }
+
+        if (Physics2D.Linecast(transform.position, slopeCheck.position, 1 << LayerMask.NameToLayer("Ground")))
+        {
+            isOnSlope = false;
+        }
+        else
+        {
+            isOnSlope = true;
+        }
+
+        if (Physics2D.Linecast(transform.position, ceilingCheck.position, 1 << LayerMask.NameToLayer("Ground")))
+        {
+            isUnderCeiling = true;
+        }
+        else
+        {
+            isUnderCeiling = false;
         }
     }
 }
