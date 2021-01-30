@@ -34,8 +34,6 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(isOnSlope);
-
         if (Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground")))
         {
             isGrounded = true;
@@ -54,29 +52,41 @@ public class PlayerMovement : MonoBehaviour
             isOnSlope = true;
         }
 
-        // Walky left and right
+        // Walky Left
         if (Input.GetKey("d") || Input.GetKey("right")) {
-            rigidbody.velocity = new Vector2(movementSpeed, rigidbody.velocity.y);
+            // On Slope Movement
+            if (isOnSlope && isGrounded)
+                rigidbody.velocity = new Vector2(movementSpeed/1.5f, rigidbody.velocity.y);
+            // Everywhere Else Movement
+            else
+                rigidbody.velocity = new Vector2(movementSpeed, rigidbody.velocity.y);
+
             spriteRenderer.flipX = false;
             //TODO Animate run right
         }
+
+        // Walky Right
         else if (Input.GetKey("a") || Input.GetKey("left")) {
-            rigidbody.velocity = new Vector2(-movementSpeed, rigidbody.velocity.y);
+            // On Slope Movement
+            if (isOnSlope && isGrounded)
+                rigidbody.velocity = new Vector2(-movementSpeed/1.5f, rigidbody.velocity.y);
+            // Everywhere Else Movement
+            else
+                rigidbody.velocity = new Vector2(-movementSpeed, rigidbody.velocity.y);
+
             spriteRenderer.flipX = true; 
             //TODO Animate run left 
         }
         else {
             //TODO Animate idle
             rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
-
-
         }
 
-        if (Input.GetKey("space") && usedHeliJump && rigidbody.velocity.y < 0) {
-            rigidbody.gravityScale = .3f;
-        }
+        // Floaty after Helicopter Hat
+        if (Input.GetKey("space") && usedHeliJump && rigidbody.velocity.y < 0)
+            rigidbody.drag = 10f; 
         else
-            rigidbody.gravityScale = 1.2f;
+            rigidbody.drag = 0f;
 
         // Jumpy Uppy
         if (Input.GetKeyDown("space")) {
@@ -91,7 +101,8 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-         if (isGrounded) {
+        // Allow heli jump once you have landed
+        if (isGrounded) {
             usedHeliJump = false;
         }
    }
