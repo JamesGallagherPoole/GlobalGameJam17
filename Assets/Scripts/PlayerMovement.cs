@@ -121,8 +121,8 @@ public class PlayerMovement : MonoBehaviour
 
         // Exit out of a confident slide once you go under a certain speed
         if (isSliding && rigidbody.velocity.x < 3f && rigidbody.velocity.x > -3f || triggerTrampolineJump) {
-            boxCollider.offset = new Vector2(0f, 0f);
-            boxCollider.size = new Vector2(1f, 2f);
+            boxCollider.offset = new Vector2(0f, -.05f);
+            boxCollider.size = new Vector2(1f, 1.9f);
             usedSlideOfConfidence = false;
             isSliding = false;
         }
