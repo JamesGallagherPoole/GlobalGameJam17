@@ -560,6 +560,7 @@ MonoBehaviour:
   movementSpeed: 5
   jumpForce: 7
   heliHatJumpForce: 12
+  slideBoostForce: 550
   mechanicsManager: {fileID: 620190766}
   groundCheck: {fileID: 24668251}
   slopeCheck: {fileID: 448394218}
