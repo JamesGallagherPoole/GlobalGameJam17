@@ -50,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
 
         // Walky Left
         if (Input.GetKey("d") || Input.GetKey("right")) {
-            if (!isSliding) {
+            if (!isSliding || !isGrounded) {
                 // On Slope Movement
                 if (isOnSlope && isGrounded)
                     rigidbody.velocity = new Vector2(movementSpeed/1.5f, rigidbody.velocity.y);
@@ -64,7 +64,7 @@ public class PlayerMovement : MonoBehaviour
 
         // Walky Right
         else if (Input.GetKey("a") || Input.GetKey("left")) {
-            if (!isSliding) {
+            if (!isSliding || !isGrounded) {
                 // On Slope Movement
                 if (isOnSlope && isGrounded)
                     rigidbody.velocity = new Vector2(-movementSpeed/1.5f, rigidbody.velocity.y);
