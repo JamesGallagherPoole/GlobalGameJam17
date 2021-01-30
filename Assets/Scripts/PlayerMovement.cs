@@ -8,10 +8,13 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce;
     public float heliHatJumpForce;
     public float slideBoostForce;
+    public float trampolineJumpForce;
 
     private bool usedHeliJump;
     private bool usedSlideOfConfidence;
     private bool isSliding;
+
+    private bool triggerTrampolineJump;
 
     public MechanicsManager mechanicsManager;
 
@@ -89,19 +92,17 @@ public class PlayerMovement : MonoBehaviour
         }
         else {
             //TODO Animate idle
-            if (!isSliding)
-                rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
         }
 
         // Floaty after Helicopter Hat
-        if (Input.GetKey("space") && usedHeliJump && rigidbody.velocity.y < 0)
+        if (Input.GetKey("space") && mechanicsManager.hasHeliHat && rigidbody.velocity.y < 0)
             rigidbody.drag = 5f; 
             // TODO Animate floating
         else
             rigidbody.drag = 0f;
 
         // Jumpy Uppy
-        if (Input.GetKeyDown("space")) {
+        if (Input.GetKeyDown("space") && !isSliding) {
             // Normal Jump
             if (isGrounded) {
                 rigidbody.velocity = new Vector2(rigidbody.velocity.x, jumpForce);
@@ -127,6 +128,12 @@ public class PlayerMovement : MonoBehaviour
             boxCollider.size = new Vector2(1f, 1f);
         }
 
+        // If a trampoline jump has been triggered, do the jump silly!
+        if (triggerTrampolineJump) {
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, trampolineJumpForce);
+            triggerTrampolineJump = false;
+        }
+
         // Reset heli jump once you have landed
         if (isGrounded) {
             usedHeliJump = false;
@@ -139,5 +146,14 @@ public class PlayerMovement : MonoBehaviour
             usedSlideOfConfidence = false;
             isSliding = false;
         }
-   }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        // Trigger a trampoline jump!
+        if(collider.gameObject.tag == "Trampoline")
+        {
+            triggerTrampolineJump = true;
+        }
+    }
 }
