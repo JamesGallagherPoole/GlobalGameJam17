@@ -20,9 +20,11 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isGrounded;
     private bool isOnSlope;
+    private bool isUnderCeiling;
 
     public Transform groundCheck;
     public Transform slopeCheck;
+    public Transform ceilingCheck;
 
     Rigidbody2D rigidbody;
     BoxCollider2D boxCollider;
@@ -44,23 +46,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground")))
-        {
-            isGrounded = true;
-        }
-        else
-        {
-            isGrounded = false;
-        }
-
-        if (Physics2D.Linecast(transform.position, slopeCheck.position, 1 << LayerMask.NameToLayer("Ground")))
-        {
-            isOnSlope = false;
-        }
-        else
-        {
-            isOnSlope = true;
-        }
+        DetectCollisions();
 
         // Walky Left
         if (Input.GetKey("d") || Input.GetKey("right")) {
@@ -154,6 +140,36 @@ public class PlayerMovement : MonoBehaviour
         if(collider.gameObject.tag == "Trampoline")
         {
             triggerTrampolineJump = true;
+        }
+    }
+
+    private void DetectCollisions()
+    {
+        if (Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground")))
+        {
+            isGrounded = true;
+        }
+        else
+        {
+            isGrounded = false;
+        }
+
+        if (Physics2D.Linecast(transform.position, slopeCheck.position, 1 << LayerMask.NameToLayer("Ground")))
+        {
+            isOnSlope = false;
+        }
+        else
+        {
+            isOnSlope = true;
+        }
+
+        if (Physics2D.Linecast(transform.position, ceilingCheck.position, 1 << LayerMask.NameToLayer("Ground")))
+        {
+            isUnderCeiling = true;
+        }
+        else
+        {
+            isUnderCeiling = false;
         }
     }
 }
