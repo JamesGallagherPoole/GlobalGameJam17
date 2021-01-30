@@ -8,9 +8,15 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce = 1;
     public float heliHatJumpForce = 1;
 
+    private bool usedHeliJump;
+
+    public MechanicsManager mechanicsManager;
+
     private bool isGrounded;
+    private bool isOnSlope;
 
     public Transform groundCheck;
+    public Transform slopeCheck;
 
     Rigidbody2D rigidbody;
     SpriteRenderer spriteRenderer;
@@ -21,12 +27,15 @@ public class PlayerMovement : MonoBehaviour
     {
         rigidbody = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        usedHeliJump = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(Input.GetKeyDown("space"));
+        Debug.Log(isOnSlope);
+
         if (Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground")))
         {
             isGrounded = true;
@@ -34,6 +43,15 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             isGrounded = false;
+        }
+
+        if (Physics2D.Linecast(transform.position, slopeCheck.position, 1 << LayerMask.NameToLayer("Ground")))
+        {
+            isOnSlope = false;
+        }
+        else
+        {
+            isOnSlope = true;
         }
 
         // Walky left and right
@@ -49,11 +67,26 @@ public class PlayerMovement : MonoBehaviour
         }
         else {
             //TODO Animate idle
+            rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
+
+
         }
 
         // Jumpy Uppy
-        if (Input.GetKeyDown("space") && isGrounded) {
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, jumpForce);
+        if (Input.GetKeyDown("space")) {
+            // Normal Jump
+            if (isGrounded) {
+                rigidbody.velocity = new Vector2(rigidbody.velocity.x, jumpForce);
+            }
+            // Helicopter Hat Jump
+            else if (!isGrounded && mechanicsManager.hasHeliHat && !usedHeliJump) {
+                rigidbody.velocity = new Vector2(rigidbody.velocity.x, heliHatJumpForce);
+                usedHeliJump = true;
+            }
+        }
+
+        if (isGrounded) {
+            usedHeliJump = false;
         }
     }
 }
