@@ -6,23 +6,54 @@ public class PlayerMovement : MonoBehaviour
 {
     public float movementSpeed = 1;
     public float jumpForce = 1;
+    public float heliHatJumpForce = 1;
 
-    public Rigidbody2D playerRigidBody;
+    private bool isGrounded;
+
+    public Transform groundCheck;
+
+    Rigidbody2D rigidbody;
+    SpriteRenderer spriteRenderer;
+    
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        rigidbody = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        var movement = Input.GetAxis("Horizontal");
-        transform.position += new Vector3(movement * movementSpeed * Time.deltaTime, 0, 0);
-    
-        if (Input.GetButtonDown("Jump") && Mathf.Abs(playerRigidBody.velocity.y) < 0.001f) {
-            playerRigidBody.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+        Debug.Log(Input.GetKeyDown("space"));
+        if (Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground")))
+        {
+            isGrounded = true;
+        }
+        else
+        {
+            isGrounded = false;
+        }
+
+        // Walky left and right
+        if (Input.GetKey("d") || Input.GetKey("right")) {
+            rigidbody.velocity = new Vector2(movementSpeed, rigidbody.velocity.y);
+            spriteRenderer.flipX = false;
+            //TODO Animate run right
+        }
+        else if (Input.GetKey("a") || Input.GetKey("left")) {
+            rigidbody.velocity = new Vector2(-movementSpeed, rigidbody.velocity.y);
+            spriteRenderer.flipX = true; 
+            //TODO Animate run left 
+        }
+        else {
+            //TODO Animate idle
+        }
+
+        // Jumpy Uppy
+        if (Input.GetKeyDown("space") && isGrounded) {
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, jumpForce);
         }
     }
 }
