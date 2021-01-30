@@ -72,6 +72,12 @@ public class PlayerMovement : MonoBehaviour
 
         }
 
+        if (Input.GetKey("space") && usedHeliJump && rigidbody.velocity.y < 0) {
+            rigidbody.gravityScale = .3f;
+        }
+        else
+            rigidbody.gravityScale = 1.2f;
+
         // Jumpy Uppy
         if (Input.GetKeyDown("space")) {
             // Normal Jump
@@ -85,8 +91,8 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if (isGrounded) {
+         if (isGrounded) {
             usedHeliJump = false;
         }
-    }
+   }
 }
