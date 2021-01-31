@@ -37,6 +37,24 @@ public class PlayerMovement : MonoBehaviour
     SpriteRenderer spriteRenderer;
     Animator animator;
 
+    [FMODUnity.EventRef]
+    public string SlideEvent = "";
+
+    [FMODUnity.EventRef]
+    public string HeliHatEvent = "";
+
+    [FMODUnity.EventRef]
+    public string LandingEvent = "";
+
+    [FMODUnity.EventRef]
+    public string DoubleJumpEvent = "";
+
+    [FMODUnity.EventRef]
+    public string JumpEvent = "";
+
+    [FMODUnity.EventRef]
+    public string TaskCompleteEvent = "";
+
     // Start is called before the first frame update
     void Start()
     {
