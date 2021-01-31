@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Trampoline
   - HeliPickup
+  - TaskCheckmark
+  - GameStateIncrease
+  - GameStateDecrease
   layers:
   - Default
   - TransparentFX
