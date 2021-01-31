@@ -1223,6 +1223,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 923729913003089301, guid: fe55600d436980640b86a046526b28a1, type: 3}
+      propertyPath: m_Alpha
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 923729913003089303, guid: fe55600d436980640b86a046526b28a1, type: 3}
       propertyPath: m_Name
       value: MenuScreen
@@ -1412,6 +1416,30 @@ PrefabInstance:
       objectReference: {fileID: 175224635}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bfc3334952e177c408a9fde4b8a45ba0, type: 3}
+--- !u!1 &2966929364858956333 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2966929364402353668, guid: bfc3334952e177c408a9fde4b8a45ba0, type: 3}
+  m_PrefabInstance: {fileID: 2966929364858956332}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &2966929364858956334
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2966929364858956333}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d41bc4fc410e3004f83662f3d0e6a1f0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &3069070345023371917
 PrefabInstance:
   m_ObjectHideFlags: 0
