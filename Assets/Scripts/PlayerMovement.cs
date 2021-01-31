@@ -35,6 +35,25 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody2D rigidbody;
     BoxCollider2D boxCollider;
     SpriteRenderer spriteRenderer;
+    Animator animator;
+
+    [FMODUnity.EventRef]
+    public string SlideEvent = "";
+
+    [FMODUnity.EventRef]
+    public string HeliHatEvent = "";
+
+    [FMODUnity.EventRef]
+    public string LandingEvent = "";
+
+    [FMODUnity.EventRef]
+    public string DoubleJumpEvent = "";
+
+    [FMODUnity.EventRef]
+    public string JumpEvent = "";
+
+    [FMODUnity.EventRef]
+    public string TaskCompleteEvent = "";
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +61,7 @@ public class PlayerMovement : MonoBehaviour
         rigidbody = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
+        animator = GetComponent<Animator>();
 
         gameStateManager.gameStateChangeEvent.AddListener(UpdateState);
 
@@ -71,9 +91,18 @@ public class PlayerMovement : MonoBehaviour
                 // Everywhere Else Movement
                 else
                     rigidbody.velocity = new Vector2(currentMovementSpeed, rigidbody.velocity.y);
+                
+                // Select correct animation
+                if (isGrounded) {
+                    if (currentGameState == 2)
+                        animator.Play("RunHigh");
+                    else if (currentGameState == 1)
+                        animator.Play("RunMedium");
+                    else if (currentGameState == 0)
+                        animator.Play("RunLow");
+                }
             }
             spriteRenderer.flipX = false;
-            //TODO Animate run right
         }
 
         // Walky Right
@@ -85,32 +114,76 @@ public class PlayerMovement : MonoBehaviour
                 // Everywhere Else Movement
                 else
                     rigidbody.velocity = new Vector2(-currentMovementSpeed, rigidbody.velocity.y);
+
+                // Select correct animation
+                if (isGrounded) {
+                    if (currentGameState == 2)
+                        animator.Play("RunHigh");
+                    else if (currentGameState == 1)
+                        animator.Play("RunMedium");
+                    else if (currentGameState == 0)
+                        animator.Play("RunLow");
+                }
             }
 
             spriteRenderer.flipX = true; 
-            //TODO Animate run left 
         }
         else {
-            //TODO Animate idle
+            // Select idle animation
+            if (rigidbody.velocity.x > -.1f && rigidbody.velocity.x < .1f && rigidbody.velocity.y > -.1f && rigidbody.velocity.y < .1f ) {
+                if (currentGameState == 2)
+                    animator.Play("IdleHigh");
+                else if (currentGameState == 1)
+                    animator.Play("IdleMedium");
+                else if (currentGameState == 0)
+                    animator.Play("IdleLow");
+            }
         }
 
         // Floaty after Helicopter Hat
-        if (Input.GetKey("space") && mechanicsManager.hasHeliHat && rigidbody.velocity.y < 0)
+        if (Input.GetKey("space") && mechanicsManager.hasHeliHat && rigidbody.velocity.y < 0) {
             rigidbody.drag = 5f; 
-            // TODO Animate floating
-        else
+
+            if (currentGameState == 2)
+                animator.Play("FallingHigh");
+            else if (currentGameState == 1)
+                animator.Play("FallingMedium");
+            else if (currentGameState == 0)
+                animator.Play("FallingLow");
+        }
+        else {
+            // Normal floaty
             rigidbody.drag = 0f;
+
+            if (rigidbody.velocity.y < -.5f) {
+                if (currentGameState == 2)
+                    animator.Play("FallingHigh");
+                else if (currentGameState == 1)
+                    animator.Play("FallingMedium");
+                else if (currentGameState == 0)
+                    animator.Play("FallingLow");
+            }
+        }
 
         // Jumpy Uppy
         if (Input.GetKeyDown("space") && !isSliding) {
             // Normal Jump
             if (isGrounded) {
                 rigidbody.velocity = new Vector2(rigidbody.velocity.x, jumpForce);
+
+                if (currentGameState == 2)
+                    animator.Play("JumpHigh");
+                else if (currentGameState == 1)
+                    animator.Play("JumpMedium");
+                else if (currentGameState == 0)
+                    animator.Play("JumpLow");
             }
             // Helicopter Hat Jump
             else if (!isGrounded && mechanicsManager.hasHeliHat && !usedHeliJump) {
                 rigidbody.velocity = new Vector2(rigidbody.velocity.x, heliHatJumpForce);
                 usedHeliJump = true;
+
+                animator.Play("HeliHigh");
             }
         }
 
@@ -126,6 +199,11 @@ public class PlayerMovement : MonoBehaviour
 
             boxCollider.offset = new Vector2(0f, -0.5f);
             boxCollider.size = new Vector2(1f, 1f);
+
+            if (currentGameState == 2)
+                animator.Play("SlideHigh");
+            else if (currentGameState == 1)
+                animator.Play("SlideMedium");
         }
 
         // Reset heli jump once you have landed
