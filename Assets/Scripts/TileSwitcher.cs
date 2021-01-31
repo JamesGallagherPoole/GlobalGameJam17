@@ -26,25 +26,6 @@ public class TileSwitcher : MonoBehaviour
 
     void Update()
     {
-        if (currentState < 2)
-        {
-            tilemap.SwapTile(codeTiles[currentState], codeTiles[currentState + 1]);
-            tilemap.SwapTile(artTiles[currentState], artTiles[currentState + 1]);
-            tilemap.SwapTile(soundTiles[currentState], soundTiles[currentState + 1]);
-            tilemap.SwapTile(productionTiles[currentState], productionTiles[currentState + 1]);
-            tilemap.SwapTile(levelDesignTiles[currentState], levelDesignTiles[currentState + 1]);
-            tilemap.SwapTile(seamlessTiles[currentState], seamlessTiles[currentState + 1]);
-        }
-        else if(currentState > 0)
-        {
-            tilemap.SwapTile(codeTiles[currentState], codeTiles[currentState - 1]);
-            tilemap.SwapTile(artTiles[currentState], artTiles[currentState - 1]);
-            tilemap.SwapTile(soundTiles[currentState], soundTiles[currentState - 1]);
-            tilemap.SwapTile(productionTiles[currentState], productionTiles[currentState - 1]);
-            tilemap.SwapTile(levelDesignTiles[currentState], levelDesignTiles[currentState - 1]);
-            tilemap.SwapTile(seamlessTiles[currentState], seamlessTiles[currentState - 1]);
-        }
-
     }
 
     public void SwitchTilesUp()
@@ -85,6 +66,8 @@ public class TileSwitcher : MonoBehaviour
     {
         currentState = newGameState;
         Debug.Log("Current State: " + currentState);
+        SwitchTilesUp();
+        SwitchTilesDown();
     }
     void OnDestroy()
     {
