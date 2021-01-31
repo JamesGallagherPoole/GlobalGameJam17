@@ -34,24 +34,35 @@ public class PlayerMovement : MonoBehaviour
 
     Rigidbody2D rigidbody;
     BoxCollider2D boxCollider;
-    public SpriteRenderer spriteRenderer;
-    public Animator animator;
-    AudioSource audioSource;
+    SpriteRenderer spriteRenderer;
+    Animator animator;
 
-    public AudioClip slideClip;
-    public AudioClip HeliHatClip;
-    public AudioClip LandingEvent;
-    public AudioClip DoubleJumpEvent;
-    public AudioClip JumpEvent;
-    public AudioClip TaskCheckmark;
+    [FMODUnity.EventRef]
+    public string SlideEvent = "";
+
+    [FMODUnity.EventRef]
+    public string HeliHatEvent = "";
+
+    [FMODUnity.EventRef]
+    public string LandingEvent = "";
+
+    [FMODUnity.EventRef]
+    public string DoubleJumpEvent = "";
+
+    [FMODUnity.EventRef]
+    public string JumpEvent = "";
+
+    [FMODUnity.EventRef]
+    public string TaskCompleteEvent = "";
 
     // Start is called before the first frame update
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
-        audioSource = GetComponent<AudioSource>();
-    
+        animator = GetComponent<Animator>();
+
         gameStateManager.gameStateChangeEvent.AddListener(UpdateState);
 
         usedHeliJump = false;
@@ -144,7 +155,7 @@ public class PlayerMovement : MonoBehaviour
             // Normal floaty
             rigidbody.drag = 0f;
 
-            if (rigidbody.velocity.y < -.05f) {
+            if (rigidbody.velocity.y < -.5f) {
                 if (currentGameState == 2)
                     animator.Play("FallingHigh");
                 else if (currentGameState == 1)
@@ -174,13 +185,6 @@ public class PlayerMovement : MonoBehaviour
 
                 animator.Play("HeliHigh");
             }
-        }
-
-        if (!isSliding && isUnderCeiling) {
-            if (currentGameState == 2)
-                animator.Play("CrouchHigh");
-            else if (currentGameState == 1)
-                animator.Play("CrouchMedium");
         }
 
         // Slide of self confidence
