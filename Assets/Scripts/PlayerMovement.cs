@@ -34,9 +34,8 @@ public class PlayerMovement : MonoBehaviour
 
     Rigidbody2D rigidbody;
     BoxCollider2D boxCollider;
-    public SpriteRenderer spriteRenderer;
-    public Animator animator;
-    AudioSource audioSource;
+    SpriteRenderer spriteRenderer;
+    Animator animator;
 
     public AudioClip SlideClip;
     public AudioClip HeliHatClip;
@@ -49,9 +48,10 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
-        audioSource = GetComponent<AudioSource>();
-    
+        animator = GetComponent<Animator>();
+
         gameStateManager.gameStateChangeEvent.AddListener(UpdateState);
 
         usedHeliJump = false;
@@ -144,7 +144,7 @@ public class PlayerMovement : MonoBehaviour
             // Normal floaty
             rigidbody.drag = 0f;
 
-            if (rigidbody.velocity.y < -.05f) {
+            if (rigidbody.velocity.y < -.5f) {
                 if (currentGameState == 2)
                     animator.Play("FallingHigh");
                 else if (currentGameState == 1)
@@ -177,13 +177,6 @@ public class PlayerMovement : MonoBehaviour
                 animator.Play("HeliHigh");
                 StartCoroutine(PlayLauraSound(DoubleJumpEvent));
             }
-        }
-
-        if (!isSliding && isUnderCeiling) {
-            if (currentGameState == 2)
-                animator.Play("CrouchHigh");
-            else if (currentGameState == 1)
-                animator.Play("CrouchMedium");
         }
 
         // Slide of self confidence
