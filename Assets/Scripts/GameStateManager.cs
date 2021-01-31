@@ -27,13 +27,15 @@ public class GameStateManager : MonoBehaviour
     
     public void GameStateIncrease()
     {
-        gameState += 1;
+        if (gameState < 2)
+            gameState += 1;
         gameStateChangeEvent.Invoke(gameState);
     }
 
     public void GameStateDecrease()
     {
-        gameState -= 1;
+        if (gameState > 0)
+            gameState -= 1;
         gameStateChangeEvent.Invoke(gameState);
     }
 }

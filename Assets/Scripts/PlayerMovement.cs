@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
     private bool triggerTrampolineJump;
 
     public MechanicsManager mechanicsManager;
+    public GameStateManager gameStateManager;
 
     private bool isGrounded;
     private bool isOnSlope;
@@ -29,7 +30,6 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody2D rigidbody;
     BoxCollider2D boxCollider;
     SpriteRenderer spriteRenderer;
-    
 
     // Start is called before the first frame update
     void Start()
@@ -156,6 +156,19 @@ public class PlayerMovement : MonoBehaviour
             TaskCheckmark task = collider.gameObject.GetComponent<TaskCheckmark>();
             task.CheckOffTask();
         }
+
+        // Trigger Game State UP!
+        if (collider.gameObject.tag == "GameStateIncrease")
+        {
+            gameStateManager.GameStateIncrease();
+        }
+
+        // Trigger Game State Down!
+        if (collider.gameObject.tag == "GameStateDecrease")
+        {
+            gameStateManager.GameStateDecrease();
+        }
+
     }
 
     private void DetectCollisions()
