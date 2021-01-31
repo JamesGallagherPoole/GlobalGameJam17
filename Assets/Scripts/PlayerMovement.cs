@@ -14,6 +14,8 @@ public class PlayerMovement : MonoBehaviour
     private bool usedSlideOfConfidence;
     private bool isSliding;
 
+    private int currentGameState;
+
     private bool triggerTrampolineJump;
 
     public MechanicsManager mechanicsManager;
@@ -38,15 +40,24 @@ public class PlayerMovement : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
 
+        gameStateManager.gameStateChangeEvent.AddListener(UpdateState);
+
         usedHeliJump = false;
         usedSlideOfConfidence = false;
         isSliding = false;
+    }
+
+    void OnDestroy()
+    {
+        gameStateManager.gameStateChangeEvent.RemoveListener(UpdateState);
     }
 
     // Update is called once per frame
     void Update()
     {
         DetectCollisions();
+
+        CheckCurrentItems();
 
         // Walky Left
         if (Input.GetKey("d") || Input.GetKey("right")) {
@@ -176,6 +187,30 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("Picked Up Shoes!");
         }
 
+    }
+
+    private void UpdateState(int newGameState)
+    {
+        currentGameState = newGameState;
+    }
+
+    private void CheckCurrentItems()
+    {
+        // Check if we have changed state and need to lose some items
+        if (currentGameState < 2 && mechanicsManager.hasHeliHat == true) 
+        {
+            // Lose the heli hat :(
+            mechanicsManager.hasHeliHat = false;
+            Debug.Log("You lost your hat! :(");
+            // TODO Trigger hat fall off animation!
+        }
+        else if (currentGameState < 1 && mechanicsManager.hasSuperShoes == true)
+        {
+            // Lose the Super Shoes :(
+            mechanicsManager.hasSuperShoes = false;
+            Debug.Log("You lost your shoes! :(");
+            // TODO Trigger shoes fall off
+        }
     }
 
     private void DetectCollisions()
