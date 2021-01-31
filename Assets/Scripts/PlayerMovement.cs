@@ -38,7 +38,7 @@ public class PlayerMovement : MonoBehaviour
     public Animator animator;
     AudioSource audioSource;
 
-    public AudioClip slideClip;
+    public AudioClip SlideClip;
     public AudioClip HeliHatClip;
     public AudioClip LandingEvent;
     public AudioClip DoubleJumpEvent;
@@ -166,6 +166,8 @@ public class PlayerMovement : MonoBehaviour
                     animator.Play("JumpMedium");
                 else if (currentGameState == 0)
                     animator.Play("JumpLow");
+
+                StartCoroutine(PlayLauraSound(JumpEvent));
             }
             // Helicopter Hat Jump
             else if (!isGrounded && mechanicsManager.hasHeliHat && !usedHeliJump) {
@@ -173,6 +175,7 @@ public class PlayerMovement : MonoBehaviour
                 usedHeliJump = true;
 
                 animator.Play("HeliHigh");
+                StartCoroutine(PlayLauraSound(DoubleJumpEvent));
             }
         }
 
@@ -200,10 +203,14 @@ public class PlayerMovement : MonoBehaviour
                 animator.Play("SlideHigh");
             else if (currentGameState == 1)
                 animator.Play("SlideMedium");
+
+            StartCoroutine(PlayLauraSound(SlideClip));
         }
 
         // Reset heli jump once you have landed
         if (isGrounded) {
+            if (usedHeliJump)
+                StartCoroutine(PlayLauraSound(LandingEvent));
             usedHeliJump = false;
         }
 
@@ -243,6 +250,7 @@ public class PlayerMovement : MonoBehaviour
         {
             TaskCheckmark task = collider.gameObject.GetComponent<TaskCheckmark>();
             task.CheckOffTask();
+            StartCoroutine(PlayLauraSound(TaskCheckmark));
         }
 
         // Trigger Game State UP!
@@ -266,6 +274,13 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("Picked Up Shoes!");
         }
 
+    }
+
+    IEnumerator PlayLauraSound(AudioClip clip)
+    {
+        audioSource.clip = clip;
+        audioSource.Play();
+        yield return new WaitForSeconds(clip.length);
     }
 
     private void UpdateState(int newGameState)
