@@ -9,6 +9,7 @@ TagManager:
   - TaskCheckmark
   - GameStateIncrease
   - GameStateDecrease
+  - ShoesPickup
   layers:
   - Default
   - TransparentFX

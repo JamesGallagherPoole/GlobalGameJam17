@@ -147,7 +147,7 @@ public class PlayerMovement : MonoBehaviour
         {
             mechanicsManager.hasHeliHat = true;
             collider.gameObject.SetActive(false);
-            Debug.Log("Picked Up");
+            Debug.Log("Picked Up Hat!");
         }
 
         // Trigger a task done!
@@ -167,6 +167,13 @@ public class PlayerMovement : MonoBehaviour
         if (collider.gameObject.tag == "GameStateDecrease")
         {
             gameStateManager.GameStateDecrease();
+        }
+
+        if (collider.gameObject.tag == "ShoesPickup")
+        {
+            mechanicsManager.hasSuperShoes = true;
+            collider.gameObject.SetActive(false);
+            Debug.Log("Picked Up Shoes!");
         }
 
     }
