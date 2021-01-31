@@ -155,7 +155,7 @@ public class PlayerMovement : MonoBehaviour
             // Normal floaty
             rigidbody.drag = 0f;
 
-            if (rigidbody.velocity.y < -.5f) {
+            if (rigidbody.velocity.y < 0f) {
                 if (currentGameState == 2)
                     animator.Play("FallingHigh");
                 else if (currentGameState == 1)
