@@ -34,8 +34,8 @@ public class PlayerMovement : MonoBehaviour
 
     Rigidbody2D rigidbody;
     BoxCollider2D boxCollider;
-    SpriteRenderer spriteRenderer;
-    Animator animator;
+    public SpriteRenderer spriteRenderer;
+    public Animator animator;
 
     [FMODUnity.EventRef]
     public string SlideEvent = "";
@@ -59,9 +59,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
-        animator = GetComponent<Animator>();
 
         gameStateManager.gameStateChangeEvent.AddListener(UpdateState);
 
