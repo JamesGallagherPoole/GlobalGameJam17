@@ -13,6 +13,9 @@ public class PlayerMovement : MonoBehaviour
     private bool usedHeliJump;
     private bool usedSlideOfConfidence;
     private bool isSliding;
+    private float currentMovementSpeed;
+
+    private int currentGameState;
 
     private bool triggerTrampolineJump;
 
@@ -22,6 +25,8 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
     private bool isOnSlope;
     private bool isUnderCeiling;
+
+    public bool enableSlowerMovements;
 
     public Transform groundCheck;
     public Transform slopeCheck;
@@ -38,9 +43,18 @@ public class PlayerMovement : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
 
+        gameStateManager.gameStateChangeEvent.AddListener(UpdateState);
+
         usedHeliJump = false;
         usedSlideOfConfidence = false;
         isSliding = false;
+
+        currentMovementSpeed = movementSpeed;
+    }
+
+    void OnDestroy()
+    {
+        gameStateManager.gameStateChangeEvent.RemoveListener(UpdateState);
     }
 
     // Update is called once per frame
@@ -53,10 +67,10 @@ public class PlayerMovement : MonoBehaviour
             if (!isSliding || !isGrounded) {
                 // On Slope Movement
                 if (isOnSlope && isGrounded)
-                    rigidbody.velocity = new Vector2(movementSpeed/1.5f, rigidbody.velocity.y);
+                    rigidbody.velocity = new Vector2(currentMovementSpeed/1.5f, rigidbody.velocity.y);
                 // Everywhere Else Movement
                 else
-                    rigidbody.velocity = new Vector2(movementSpeed, rigidbody.velocity.y);
+                    rigidbody.velocity = new Vector2(currentMovementSpeed, rigidbody.velocity.y);
             }
             spriteRenderer.flipX = false;
             //TODO Animate run right
@@ -67,10 +81,10 @@ public class PlayerMovement : MonoBehaviour
             if (!isSliding || !isGrounded) {
                 // On Slope Movement
                 if (isOnSlope && isGrounded)
-                    rigidbody.velocity = new Vector2(-movementSpeed/1.5f, rigidbody.velocity.y);
+                    rigidbody.velocity = new Vector2(-currentMovementSpeed/1.5f, rigidbody.velocity.y);
                 // Everywhere Else Movement
                 else
-                    rigidbody.velocity = new Vector2(-movementSpeed, rigidbody.velocity.y);
+                    rigidbody.velocity = new Vector2(-currentMovementSpeed, rigidbody.velocity.y);
             }
 
             spriteRenderer.flipX = true; 
@@ -147,7 +161,7 @@ public class PlayerMovement : MonoBehaviour
         {
             mechanicsManager.hasHeliHat = true;
             collider.gameObject.SetActive(false);
-            Debug.Log("Picked Up");
+            Debug.Log("Picked Up Hat!");
         }
 
         // Trigger a task done!
@@ -161,14 +175,62 @@ public class PlayerMovement : MonoBehaviour
         if (collider.gameObject.tag == "GameStateIncrease")
         {
             gameStateManager.GameStateIncrease();
+            collider.gameObject.SetActive(false);
         }
 
         // Trigger Game State Down!
         if (collider.gameObject.tag == "GameStateDecrease")
         {
             gameStateManager.GameStateDecrease();
+            collider.gameObject.SetActive(false);
         }
 
+        if (collider.gameObject.tag == "ShoesPickup")
+        {
+            mechanicsManager.hasSuperShoes = true;
+            collider.gameObject.SetActive(false);
+            Debug.Log("Picked Up Shoes!");
+        }
+
+    }
+
+    private void UpdateState(int newGameState)
+    {
+        currentGameState = newGameState;
+
+        CheckCurrentAbilities();
+    }
+
+    private void CheckCurrentAbilities()
+    {
+        Debug.Log("Entering State: " + currentGameState);
+        // Check if we have changed state and need to lose some items
+        if (currentGameState < 2 && mechanicsManager.hasHeliHat == true) 
+        {
+            // Lose the heli hat :(
+            mechanicsManager.hasHeliHat = false;
+            Debug.Log("You lost your hat! :(");
+            // TODO Trigger hat fall off animation!
+        }
+        else if (currentGameState < 1 && mechanicsManager.hasSuperShoes == true)
+        {
+            // Lose the Super Shoes :(
+            mechanicsManager.hasSuperShoes = false;
+            Debug.Log("You lost your shoes! :(");
+            // TODO Trigger shoes fall off
+        }
+
+        // Adjust Movement Speed
+        if (enableSlowerMovements) {
+            if (currentGameState == 2)
+                currentMovementSpeed = movementSpeed;
+            else if (currentGameState == 1)
+                currentMovementSpeed = movementSpeed - 1;
+            else if (currentGameState == 0)
+                currentMovementSpeed = movementSpeed - 2;
+        } else {
+            currentMovementSpeed = movementSpeed;
+        }
     }
 
     private void DetectCollisions()
