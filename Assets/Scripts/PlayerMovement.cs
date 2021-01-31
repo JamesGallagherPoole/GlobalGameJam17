@@ -34,8 +34,9 @@ public class PlayerMovement : MonoBehaviour
 
     Rigidbody2D rigidbody;
     BoxCollider2D boxCollider;
-    SpriteRenderer spriteRenderer;
-    Animator animator;
+    AudioSource audioSource;
+    public SpriteRenderer spriteRenderer;
+    public Animator animator;
 
     public AudioClip SlideClip;
     public AudioClip HeliHatClip;
@@ -48,9 +49,8 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
-        animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
 
         gameStateManager.gameStateChangeEvent.AddListener(UpdateState);
 
