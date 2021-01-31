@@ -8,12 +8,15 @@ public class TaskCheckmark : MonoBehaviour
     private int currentGameState;
 
     GameStateManager gameStateManager;
+    Animator animator;
 
     // Start is called before the first frame update
     void Start()
     {
         gameStateManager = GameObject.Find("GameStateManager").GetComponent<GameStateManager>();        
         gameStateManager.gameStateChangeEvent.AddListener(UpdateState);
+
+        animator = GetComponent<Animator>();
     }
 
     void OnDestroy()
@@ -24,7 +27,21 @@ public class TaskCheckmark : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (isChecked) {
+            if (currentGameState == 0)
+                animator.Play("LowChecked");
+            else if (currentGameState == 1)
+                animator.Play("MediumChecked");
+            else if (currentGameState == 2)
+                animator.Play("HighChecked");
+        } else if (!isChecked) {
+            if (currentGameState == 0)
+                animator.Play("LowUnchecked");
+            else if (currentGameState == 1)
+                animator.Play("MediumUnchecked");
+            else if (currentGameState == 2)
+                animator.Play("HighUnchecked");
+        }
     }
 
     public void CheckOffTask()
