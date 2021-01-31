@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     private bool usedHeliJump;
     private bool usedSlideOfConfidence;
     private bool isSliding;
+    private float currentMovementSpeed;
 
     private int currentGameState;
 
@@ -57,17 +58,17 @@ public class PlayerMovement : MonoBehaviour
     {
         DetectCollisions();
 
-        CheckCurrentItems();
+        CheckCurrentAbilities();
 
         // Walky Left
         if (Input.GetKey("d") || Input.GetKey("right")) {
             if (!isSliding || !isGrounded) {
                 // On Slope Movement
                 if (isOnSlope && isGrounded)
-                    rigidbody.velocity = new Vector2(movementSpeed/1.5f, rigidbody.velocity.y);
+                    rigidbody.velocity = new Vector2(currentMovementSpeed/1.5f, rigidbody.velocity.y);
                 // Everywhere Else Movement
                 else
-                    rigidbody.velocity = new Vector2(movementSpeed, rigidbody.velocity.y);
+                    rigidbody.velocity = new Vector2(currentMovementSpeed, rigidbody.velocity.y);
             }
             spriteRenderer.flipX = false;
             //TODO Animate run right
@@ -78,10 +79,10 @@ public class PlayerMovement : MonoBehaviour
             if (!isSliding || !isGrounded) {
                 // On Slope Movement
                 if (isOnSlope && isGrounded)
-                    rigidbody.velocity = new Vector2(-movementSpeed/1.5f, rigidbody.velocity.y);
+                    rigidbody.velocity = new Vector2(-currentMovementSpeed/1.5f, rigidbody.velocity.y);
                 // Everywhere Else Movement
                 else
-                    rigidbody.velocity = new Vector2(-movementSpeed, rigidbody.velocity.y);
+                    rigidbody.velocity = new Vector2(-currentMovementSpeed, rigidbody.velocity.y);
             }
 
             spriteRenderer.flipX = true; 
@@ -194,7 +195,7 @@ public class PlayerMovement : MonoBehaviour
         currentGameState = newGameState;
     }
 
-    private void CheckCurrentItems()
+    private void CheckCurrentAbilities()
     {
         // Check if we have changed state and need to lose some items
         if (currentGameState < 2 && mechanicsManager.hasHeliHat == true) 
@@ -211,6 +212,14 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("You lost your shoes! :(");
             // TODO Trigger shoes fall off
         }
+
+        // Adjust Movement Speed
+        if (currentGameState == 2)
+            currentMovementSpeed = movementSpeed;
+        else if (currentGameState == 1)
+            currentMovementSpeed = movementSpeed - 1;
+        else if (currentGameState == 0)
+            currentMovementSpeed = movementSpeed - 2;
     }
 
     private void DetectCollisions()
