@@ -36,31 +36,22 @@ public class PlayerMovement : MonoBehaviour
     BoxCollider2D boxCollider;
     public SpriteRenderer spriteRenderer;
     public Animator animator;
+    AudioSource audioSource;
 
-    [FMODUnity.EventRef]
-    public string SlideEvent = "";
-
-    [FMODUnity.EventRef]
-    public string HeliHatEvent = "";
-
-    [FMODUnity.EventRef]
-    public string LandingEvent = "";
-
-    [FMODUnity.EventRef]
-    public string DoubleJumpEvent = "";
-
-    [FMODUnity.EventRef]
-    public string JumpEvent = "";
-
-    [FMODUnity.EventRef]
-    public string TaskCompleteEvent = "";
+    public AudioClip slideClip;
+    public AudioClip HeliHatClip;
+    public AudioClip LandingEvent;
+    public AudioClip DoubleJumpEvent;
+    public AudioClip JumpEvent;
+    public AudioClip TaskCheckmark;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
-
+        audioSource = GetComponent<AudioSource>();
+    
         gameStateManager.gameStateChangeEvent.AddListener(UpdateState);
 
         usedHeliJump = false;
