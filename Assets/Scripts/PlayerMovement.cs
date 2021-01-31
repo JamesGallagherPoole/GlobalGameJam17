@@ -26,6 +26,8 @@ public class PlayerMovement : MonoBehaviour
     private bool isOnSlope;
     private bool isUnderCeiling;
 
+    public bool enableSlowerMovements;
+
     public Transform groundCheck;
     public Transform slopeCheck;
     public Transform ceilingCheck;
@@ -46,6 +48,8 @@ public class PlayerMovement : MonoBehaviour
         usedHeliJump = false;
         usedSlideOfConfidence = false;
         isSliding = false;
+
+        currentMovementSpeed = movementSpeed;
     }
 
     void OnDestroy()
@@ -57,8 +61,6 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         DetectCollisions();
-
-        CheckCurrentAbilities();
 
         // Walky Left
         if (Input.GetKey("d") || Input.GetKey("right")) {
@@ -173,12 +175,14 @@ public class PlayerMovement : MonoBehaviour
         if (collider.gameObject.tag == "GameStateIncrease")
         {
             gameStateManager.GameStateIncrease();
+            collider.gameObject.SetActive(false);
         }
 
         // Trigger Game State Down!
         if (collider.gameObject.tag == "GameStateDecrease")
         {
             gameStateManager.GameStateDecrease();
+            collider.gameObject.SetActive(false);
         }
 
         if (collider.gameObject.tag == "ShoesPickup")
@@ -193,10 +197,13 @@ public class PlayerMovement : MonoBehaviour
     private void UpdateState(int newGameState)
     {
         currentGameState = newGameState;
+
+        CheckCurrentAbilities();
     }
 
     private void CheckCurrentAbilities()
     {
+        Debug.Log("Entering State: " + currentGameState);
         // Check if we have changed state and need to lose some items
         if (currentGameState < 2 && mechanicsManager.hasHeliHat == true) 
         {
@@ -214,12 +221,16 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Adjust Movement Speed
-        if (currentGameState == 2)
+        if (enableSlowerMovements) {
+            if (currentGameState == 2)
+                currentMovementSpeed = movementSpeed;
+            else if (currentGameState == 1)
+                currentMovementSpeed = movementSpeed - 1;
+            else if (currentGameState == 0)
+                currentMovementSpeed = movementSpeed - 2;
+        } else {
             currentMovementSpeed = movementSpeed;
-        else if (currentGameState == 1)
-            currentMovementSpeed = movementSpeed - 1;
-        else if (currentGameState == 0)
-            currentMovementSpeed = movementSpeed - 2;
+        }
     }
 
     private void DetectCollisions()
