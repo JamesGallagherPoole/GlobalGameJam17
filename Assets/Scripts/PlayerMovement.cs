@@ -34,8 +34,8 @@ public class PlayerMovement : MonoBehaviour
 
     Rigidbody2D rigidbody;
     BoxCollider2D boxCollider;
-    SpriteRenderer spriteRenderer;
-    Animator animator;
+    public SpriteRenderer spriteRenderer;
+    public Animator animator;
 
     [FMODUnity.EventRef]
     public string SlideEvent = "";
@@ -59,9 +59,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
-        animator = GetComponent<Animator>();
 
         gameStateManager.gameStateChangeEvent.AddListener(UpdateState);
 
@@ -155,7 +153,7 @@ public class PlayerMovement : MonoBehaviour
             // Normal floaty
             rigidbody.drag = 0f;
 
-            if (rigidbody.velocity.y < -.5f) {
+            if (rigidbody.velocity.y < -.05f) {
                 if (currentGameState == 2)
                     animator.Play("FallingHigh");
                 else if (currentGameState == 1)
@@ -185,6 +183,13 @@ public class PlayerMovement : MonoBehaviour
 
                 animator.Play("HeliHigh");
             }
+        }
+
+        if (!isSliding && isUnderCeiling) {
+            if (currentGameState == 2)
+                animator.Play("CrouchHigh");
+            else if (currentGameState == 1)
+                animator.Play("CrouchMedium");
         }
 
         // Slide of self confidence
