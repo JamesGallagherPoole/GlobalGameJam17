@@ -149,6 +149,13 @@ public class PlayerMovement : MonoBehaviour
             collider.gameObject.SetActive(false);
             Debug.Log("Picked Up");
         }
+
+        // Trigger a task done!
+        if (collider.gameObject.tag == "TaskCheckmark")
+        {
+            TaskCheckmark task = collider.gameObject.GetComponent<TaskCheckmark>();
+            task.CheckOffTask();
+        }
     }
 
     private void DetectCollisions()

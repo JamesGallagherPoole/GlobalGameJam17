@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Trampoline
   - HeliPickup
+  - TaskCheckmark
   layers:
   - Default
   - TransparentFX
