@@ -21,6 +21,7 @@ public class TileSwitcher : MonoBehaviour
     void Start()
     {
         tilemap = GetComponent<Tilemap>();
+        gameStateManager.gameStateChangeEvent.AddListener(UpdateState);
     }
 
     public void SwitchTilesUp()
@@ -33,7 +34,6 @@ public class TileSwitcher : MonoBehaviour
             tilemap.SwapTile(productionTiles[currentState], productionTiles[currentState + 1]);
             tilemap.SwapTile(levelDesignTiles[currentState], levelDesignTiles[currentState + 1]);
             tilemap.SwapTile(seamlessTiles[currentState], seamlessTiles[currentState + 1]);
-            currentState += 1;
         }
         else
         {
@@ -51,7 +51,6 @@ public class TileSwitcher : MonoBehaviour
             tilemap.SwapTile(productionTiles[currentState], productionTiles[currentState - 1]);
             tilemap.SwapTile(levelDesignTiles[currentState], levelDesignTiles[currentState - 1]);
             tilemap.SwapTile(seamlessTiles[currentState], seamlessTiles[currentState - 1]);
-            currentState -= 1;
         }
         else
         {
@@ -59,18 +58,14 @@ public class TileSwitcher : MonoBehaviour
         }
     }
 
-    //private void Update()
-    //{
-    //    {
-    //        if(Input.GetKeyDown(KeyCode.I))
-    //        {
-    //            SwitchTilesDown();
-    //        }
-            
-    //        if(Input.GetKeyDown(KeyCode.O))
-    //        {
-    //            SwitchTilesUp()
-    //        }
-    //    }
-    //}
+    public void UpdateState(int newGameState)
+    {
+        currentState = newGameState;
+        Debug.Log("Current State: " + currentState);
+    }
+    void OnDestroy()
+    {
+        gameStateManager.gameStateChangeEvent.RemoveListener(UpdateState);
+    }
+
 }
