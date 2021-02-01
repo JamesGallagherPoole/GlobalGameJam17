@@ -73,5 +73,4 @@ public class TileSwitcher : MonoBehaviour
     {
         gameStateManager.gameStateChangeEvent.RemoveListener(UpdateState);
     }
-
 }
