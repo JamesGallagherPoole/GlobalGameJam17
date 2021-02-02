@@ -38,6 +38,8 @@ public class PlayerMovement : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     public Animator animator;
 
+    private bool currentlyPlayingHeliSound;
+
     public AudioClip SlideClip;
     public AudioClip HeliHatClip;
     public AudioClip LandingEvent;
@@ -139,6 +141,9 @@ public class PlayerMovement : MonoBehaviour
                 animator.Play("FallingMedium");
             else if (currentGameState == 0)
                 animator.Play("FallingLow");
+
+            if (!currentlyPlayingHeliSound)
+                StartCoroutine(PlayLauraHeliSound(HeliHatClip));
         }
         else {
             // Normal floaty
@@ -274,6 +279,15 @@ public class PlayerMovement : MonoBehaviour
         audioSource.clip = clip;
         audioSource.Play();
         yield return new WaitForSeconds(clip.length);
+    }
+
+    IEnumerator PlayLauraHeliSound(AudioClip clip)
+    {
+        currentlyPlayingHeliSound = true;
+        audioSource.clip = clip;
+        audioSource.Play();
+        yield return new WaitForSeconds(clip.length);
+        currentlyPlayingHeliSound = false;
     }
 
     private void UpdateState(int newGameState)
